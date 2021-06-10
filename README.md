@@ -1,5 +1,41 @@
 # Secret Generator Extension for Service Binding
 
+This specification defines an extension to the [Service Binding Specification for Kubernetes](https://github.com/k8s-service-bindings/spec) ("Service Binding spec" for short henceforth).  This extension specifies generating a Kubernetes Secret resource that can be consumed by any Service Binding spec compliant implementation. The Secret resource is generated from one of these sources:
+
+- Operator Lifecycle Manager Descriptors
+- Custom Resource Definition Annotations
+- Custom Resource Annotations
+
+## Status
+
+This document is a pre-release, working draft of the "Secret Generator Extension for Service Binding" specification, representing the collective efforts of the community.  It is published for early implementors and users to provide feedback.  Any part of this spec may change before the spec reaches 1.0 with no promise of backwards compatibility.
+
+## Notational Conventions
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [BCP 14](https://tools.ietf.org/html/bcp14) [[RFC2119](https://tools.ietf.org/html/rfc2119)] [[RFC8174](https://tools.ietf.org/html/rfc8174)] when, and only when, they appear in all capitals, as shown here.
+
+The key words "unspecified", "undefined", and "implementation-defined" are to be interpreted as described in the [rationale for the C99 standard](http://www.open-std.org/jtc1/sc22/wg14/www/C99RationaleV5.10.pdf#page=18).
+
+An implementation is not compliant if it fails to satisfy one or more of the MUST, MUST NOT, REQUIRED, SHALL, or SHALL NOT requirements for the protocols it implements.  An implementation is compliant if it satisfies all the MUST, MUST NOT, REQUIRED, SHALL, and SHALL NOT requirements for the protocols it implements.
+
+## Terminology definition
+
+<dl>
+
+  <dt>Operator Lifecycle Manager (OLM)</dt>
+  <dd>The <a href="https://olm.operatorframework.io/">Operator Lifecycle Manager (OLM)</a> extends Kubernetes to provide a declarative way to install, manage, and upgrade Operators on a cluster.</dd>
+
+  <dt>OLM Descriptors</dt>
+  <dd>The OLM Descriptors is used for describing the properties of a field in the Custom Resource.  There are two types of descriptors, statusDescriptor and specDescriptor.  A statusDescriptor is for describing the properties of a status field.  A specDescriptor is for describing the properties of a spec field.</dd>
+
+  <dt>Custom Resource Definition (CRD)</dt>
+  <dd>Custom code that defines a resource to add to your Kubernetes API server without building a complete custom server.  Custom Resource Definitions let you extend the Kubernetes API for your environment if the publicly supported API resources can't meet your needs.  A Kubernetes <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">CustomResourceDefinition</a>.</dd>
+
+  <dt>Custom Resource (CR)</dt>
+  <dd>A custom resource is an extension of the Kubernetes API that is not necessarily available in a default Kubernetes installation.  A Kubernetes <a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">Custom Resource</a>.</dd>
+
+</dl>
+
 Many services, especially initially, will not be Provisioned Service-compliant.  These services will expose the appropriate binding `Secret` information, but not in the way that the specification or applications expect.  Users should have a way of describing a mapping from existing data associated with arbitrary resources and CRDs to a representation of a binding `Secret`.
 
 To handle the majority of existing resources and CRDs, `Secret` generation needs to support the following behaviors:
